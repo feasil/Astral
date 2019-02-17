@@ -9,7 +9,6 @@ public class MaisonSigne {
 	private Signe signe;
 	
 	
-	
 	public Maison getMaison() {
 		return maison;
 	}
