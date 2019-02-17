@@ -53,4 +53,15 @@ public enum Signe {
 //	public Signe getDescendant() {
 //		return values()[(ordinal()+6)%12];
 //	}
+	
+	public static Signe getSigne(String nom) {
+		if ( nom == null )
+			return null;
+		
+		for ( Signe s : values() )
+			if ( nom.equalsIgnoreCase(s.getNom()) )
+				return s;
+		
+		return null;
+	}
 }

@@ -27,4 +27,18 @@ public enum Maison {
 	public int getNumero() {
 		return ordinal()+1;
 	}
+	
+	
+	public static Maison getMaison(String nom) {
+		if ( nom == null )
+			return null;
+		
+		for ( Maison m : values() )
+			if ( nom.equalsIgnoreCase(m.getNom()) 
+					|| nom.equalsIgnoreCase("Maison " + m.getNumero())  )
+				return m;
+		
+		
+		return null;
+	}
 }

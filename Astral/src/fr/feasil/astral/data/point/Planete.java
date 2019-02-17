@@ -1,4 +1,4 @@
-package fr.feasil.astral.data.celeste;
+package fr.feasil.astral.data.point;
 
 import fr.feasil.astral.data.PointFixe;
 
@@ -24,5 +24,21 @@ public enum Planete implements PointFixe {
 	@Override
 	public String getNom() {
 		return nom;
+	}
+	@Override
+	public boolean hasMaison() {
+		return true;
+	}
+	
+	
+	public static Planete getPlanete(String nom) {
+		if ( nom == null )
+			return null;
+		
+		for ( Planete p : values() )
+			if ( nom.equalsIgnoreCase(p.getNom()) )
+				return p;
+		
+		return null;
 	}
 }
