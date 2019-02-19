@@ -1,6 +1,6 @@
 package fr.feasil.astral.data;
 
-public enum Maison {
+public enum Maison implements ThemeElement {
 	MAISON_1("Maison I"), //Ascendant
 	MAISON_2("Maison II"), 
 	MAISON_3("Maison III"), 
@@ -32,10 +32,10 @@ public enum Maison {
 	public static Maison getMaison(String nom) {
 		if ( nom == null )
 			return null;
-		
+		nom = nom.replaceAll(" ", "").replaceAll("_", "");
 		for ( Maison m : values() )
-			if ( nom.equalsIgnoreCase(m.getNom()) 
-					|| nom.equalsIgnoreCase("Maison " + m.getNumero())  )
+			if ( nom.equalsIgnoreCase(m.getNom().replaceAll(" ", "")) 
+					|| nom.equalsIgnoreCase("Maison" + m.getNumero())  )
 				return m;
 		
 		

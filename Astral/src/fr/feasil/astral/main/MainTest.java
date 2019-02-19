@@ -1,56 +1,73 @@
 package fr.feasil.astral.main;
 
-import org.jeasy.rules.api.Facts;
-import org.jeasy.rules.api.Rule;
-import org.jeasy.rules.api.Rules;
-import org.jeasy.rules.api.RulesEngine;
-import org.jeasy.rules.core.DefaultRulesEngine;
-import org.jeasy.rules.mvel.MVELRule;
-
-import fr.feasil.astral.data.Signe;
 import fr.feasil.astral.theme.Theme;
-import fr.feasil.astral.theme.ThemePointFixe;
+import fr.feasil.astral.theme.ruleengine.ActionDispatcher;
+import fr.feasil.astral.theme.ruleengine.ExpressionParser;
+import fr.feasil.astral.theme.ruleengine.Rule;
+import fr.feasil.astral.theme.ruleengine.Rules;
+import fr.feasil.astral.theme.ruleengine.expression.OperationAnd;
+import fr.feasil.astral.theme.ruleengine.expression.OperationEn;
+import fr.feasil.astral.theme.ruleengine.expression.OperationNot;
+import fr.feasil.astral.theme.ruleengine.expression.Operation;
+import fr.feasil.astral.theme.ruleengine.expression.Operations;
 
 public class MainTest {
 	
 	public static void main(String[] args) {
 		//MainTest m = new MainTest();
+		Theme theme = new Theme("in/ThemeTest.xlsx");
+//		for ( ThemePointFixe tpf : theme.getListePointFixe() ) {
+//			System.out.println(tpf.getPointFixe() + "   " + tpf.getPosition() + "   " + tpf.isRetrograde() + "   " + tpf.getSigne() + "      //   " + tpf.getMaison());
+//			for ( ThemeAspect ta : tpf.getListeAspect() )
+//				System.out.println("	" + ta.getAspect() + "   " + ta.getPointFixeSecondaire() + "   " + ta.getOrbe());
+//		}
+		System.out.println("--------------------------");
+//		for ( ThemeMaison tm : theme.getListeMaison() )
+//			System.out.println(tm.getMaison() + "   " + tm.getPosition() + "   " + tm.getSigne());
 		
-		Theme theme = new Theme("in/test.xlsx");
-		for ( ThemePointFixe tpf : theme.getListePointFixe() )
-			System.out.println(tpf.getPointFixe() + "   " + tpf.getPosition() + "   " + tpf.isRetrograde() + "   " + tpf.getSigne() + "      //   " + tpf.getMaison());
+		//TODO load Data => DataTest.xlsx
 		
-//		Rule weatherRule = new RuleBuilder()
-//		        .name("rule1")
-//		        .description("règle n°1")
-//		        .when(facts -> facts.get("rain").equals(true) 
-//		        		&& facts.get("umbrella") != null && facts.get("umbrella").equals(false) 
-//		        		&& facts.get("day") != null )
-//		        .then(facts -> System.out.println("On est " + facts.get("day") + " et il pleut, prend ton parapluie !"))
-//		        .build();
-		Rule weatherRule = new MVELRule()
-		        .name("rule1")
-		        .description("règle n°1")
-		        //.when("rain == true && day != null")
-		        //.then("System.out.println(\"On est \" + day + \" et il pleut\" + (umbrella?\"\":\", prend ton parapluie\") + \" !\");");
-		        .when("rain == true && day != null")
-		        .then("System.out.println(\"coucou\");");
 		
-		// define facts
-        Facts facts = new Facts();
-        facts.put("rain", true);
-        facts.put("signe", Signe.LION);
-        facts.put("maison", false);
-        facts.put("day", "dimanche");
-
-        // define rules
-        //Rule weatherRule = ...
-        Rules rules = new Rules();
-        rules.register(weatherRule);
-
-        // fire rules on known facts
-        RulesEngine rulesEngine = new DefaultRulesEngine();
-        rulesEngine.fire(rules, facts);
+		Operations operations = Operations.INSTANCE;
+		
+		// register new operations with the previously created container
+		Operation ot = new OperationAnd();
+		operations.registerOperation(ot, "and"); operations.registerOperation(ot, "AND");
+		operations.registerOperation(ot, "et"); operations.registerOperation(ot, "ET");
+		ot = new OperationEn();
+		operations.registerOperation(ot, "en"); operations.registerOperation(ot, "EN");
+		ot = new OperationNot();
+		operations.registerOperation(ot, "not"); operations.registerOperation(ot, "NOT");
+		operations.registerOperation(ot, "non"); operations.registerOperation(ot, "NON");
+		
+		// add all rules to a single container
+		Rules rules = new Rules();
+		
+		String[][] regles = {{"Lion EN Maison_8", 						"quand la maison 8 est en Lion... (1)"}, 
+							{"maison1 EN sagittaire", 					"quand la maison 1 est en Sagittaire... (2)"}, 
+							{"Jupiter EN Я ET NON TOTO en Capricorne", 	"quand Jupiter est en retrograde et Vénus n'est pas en Capricorne... (3)"}, 
+							{"Vesta en Maison3", 						"quand Vesta est en maison 3... (4)"}};
+		for ( String[] rgl : regles )
+		{
+			try {
+				rules.addRule(new Rule.Builder()
+						.withExpression(ExpressionParser.fromString(rgl[0]))
+						.withDispatcher(new ActionDispatcher() {
+							@Override
+							public void fire() {
+								System.out.println(rgl[1]);
+							}
+						})
+						.build());
+			} catch (IllegalArgumentException e) {
+				System.out.println("ERREUR = " + e.getMessage() + " // Erreur remonté par la règle : " + rgl[0] );
+			}
+		}
+		
+		// for test purpose define a variable binding ...
+		// ... and evaluate the defined rules with the specified bindings
+		boolean triggered = rules.eval(theme);
+		System.out.println("Action triggered: " + triggered);
 		
 	}
 	

@@ -1,6 +1,8 @@
 package fr.feasil.astral.data;
 
-public enum Signe {
+import fr.feasil.utils.CharUtils;
+
+public enum Signe implements ThemeElement {
 	BELIER("Bélier", "♈", "21/03", "20/04", Element.FEU, Modalite.CARDINAL), 
 	TAUREAU("Taureau", "♉", "21/04", "21/05", Element.TERRE, Modalite.FIXE), 
 	GEMEAUX("Gémeaux", "♊", "22/05", "21/06", Element.AIR, Modalite.MUTABLE), 
@@ -13,7 +15,6 @@ public enum Signe {
 	CAPRICORNE("Capricorne", "♑", "22/12", "20/01", Element.TERRE, Modalite.CARDINAL), 
 	VERSEAU("Verseau", "♒", "21/01", "19/02", Element.AIR, Modalite.FIXE), 
 	POISSONS("Poissons", "♓", "20/02", "20/03", Element.EAU, Modalite.MUTABLE);
-	
 	
 	private String nom;
 	private String symbole;
@@ -58,9 +59,16 @@ public enum Signe {
 		if ( nom == null )
 			return null;
 		
+		nom = CharUtils.removeAccent(nom);
+		
 		for ( Signe s : values() )
-			if ( nom.equalsIgnoreCase(s.getNom()) )
+			if ( nom.equalsIgnoreCase(CharUtils.removeAccent(s.getNom()))
+					|| nom.equalsIgnoreCase(s.getSymbole()) )
 				return s;
+		if ( nom.equalsIgnoreCase("Gemeau") )
+			return GEMEAUX;
+		if ( nom.equalsIgnoreCase("Poisson") )
+			return POISSONS;
 		
 		return null;
 	}

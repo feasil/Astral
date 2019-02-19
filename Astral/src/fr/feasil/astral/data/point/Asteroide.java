@@ -1,6 +1,7 @@
 package fr.feasil.astral.data.point;
 
 import fr.feasil.astral.data.PointFixe;
+import fr.feasil.utils.CharUtils;
 
 public enum Asteroide implements PointFixe {
 	CHIRON("Chiron"), 
@@ -30,9 +31,10 @@ public enum Asteroide implements PointFixe {
 	public static Asteroide getAsteroide(String nom) {
 		if ( nom == null )
 			return null;
+		nom = CharUtils.removeAccent(nom);
 		
 		for ( Asteroide a : values() )
-			if ( nom.equalsIgnoreCase(a.getNom()) )
+			if ( nom.equalsIgnoreCase(CharUtils.removeAccent(a.getNom())) )
 				return a;
 		
 		return null;

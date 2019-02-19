@@ -4,7 +4,7 @@ import fr.feasil.astral.data.PointFixe;
 
 public enum PointFictif implements PointFixe {
 	NOEUD_NORD("Noeud Nord"),
-	LILITH("Lilith"), //aussi appelé LUNE_NOIRE("Lune Noire")
+	LILITH("Lilith"), //aussi appelé "Lune Noire"
 	FORTUNE("Fortune"), 
 	POINT_EST("Point Est");
 	
@@ -29,10 +29,14 @@ public enum PointFictif implements PointFixe {
 	public static PointFictif getPointFictif(String nom) {
 		if ( nom == null )
 			return null;
+		nom = nom.replaceAll(" ", "").replaceAll("_", "");
 		
 		for ( PointFictif p : values() )
-			if ( nom.equalsIgnoreCase(p.getNom()) )
+			if ( nom.equalsIgnoreCase(p.getNom().replaceAll(" ", ""))  )
 				return p;
+		
+		if ( nom.equalsIgnoreCase("Lunenoire"))
+			return LILITH;
 		
 		return null;
 	}

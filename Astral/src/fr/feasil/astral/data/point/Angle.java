@@ -4,17 +4,17 @@ import fr.feasil.astral.data.PointFixe;
 
 public enum Angle implements PointFixe {
 	ASCENDANT("Ascendant", "AS"), //Maison I
-	DESCENDANT("Descendant", null), //opposé de l'ascendant
-	FOND_DU_CIEL("Fond du Ciel", null), //Maison IV
+	DESCENDANT("Descendant", "DS"), //opposé de l'ascendant
+	FOND_DU_CIEL("Fond du Ciel", "FC"), //Maison IV
 	MILIEU_DU_CIEL("Milieu du Ciel", "MC"); //Maison X
 	
 	
 	private String nom;
-	private String nom2;
+	private String sigle;
 	
-	private Angle(String nom, String nom2) {
+	private Angle(String nom, String sigle) {
 		this.nom = nom;
-		this.nom2 = nom2;
+		this.sigle = sigle;
 	}
 	
 	@Override
@@ -26,15 +26,19 @@ public enum Angle implements PointFixe {
 		return false;
 	}
 	
+	public String getSigle() {
+		return sigle;
+	}
 	
 	
 	public static Angle getAngle(String nom) {
 		if ( nom == null )
 			return null;
+		nom = nom.replaceAll(" ", "").replaceAll("_", "");
 		
 		for ( Angle a : values() )
-			if ( nom.equalsIgnoreCase(a.getNom()) 
-					|| nom.equalsIgnoreCase(a.nom2)  )
+			if ( nom.equalsIgnoreCase(a.getNom().replaceAll(" ", "")) 
+					|| nom.equalsIgnoreCase(a.sigle)  )
 				return a;
 		
 		
