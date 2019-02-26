@@ -44,17 +44,20 @@ public class ExcelSheet {
 			for (int i = 0; i < length; i++)
 			{
 				Cell cellule = line.getCell(start + i);
-				switch (cellule.getCellType())
-				{
-				case STRING : 
-					xlsSheet.body[index][i] = cellule.getStringCellValue();
-					break;
-				case BOOLEAN : 
-					xlsSheet.body[index][i] = cellule.getBooleanCellValue();
-					break;
-				default :
-					xlsSheet.body[index][i] = cellule.getNumericCellValue();
-				}
+				if ( cellule != null )
+					switch (cellule.getCellType())
+					{
+					case STRING : 
+						xlsSheet.body[index][i] = cellule.getStringCellValue();
+						break;
+					case BOOLEAN : 
+						xlsSheet.body[index][i] = cellule.getBooleanCellValue();
+						break;
+					default :
+						xlsSheet.body[index][i] = cellule.getNumericCellValue();
+					}
+				else 
+					xlsSheet.body[index][i] = null;
 			}
 		}
 		
