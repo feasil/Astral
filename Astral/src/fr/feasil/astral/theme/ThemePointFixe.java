@@ -6,14 +6,17 @@ import java.util.List;
 import fr.feasil.astral.data.Maison;
 import fr.feasil.astral.data.PointFixe;
 import fr.feasil.astral.data.Signe;
+import fr.feasil.astral.data.Special;
 
 public class ThemePointFixe {
 	
 	private PointFixe pointFixe;
 	private float position;
-	private boolean retrograde;
+//	private boolean retrograde;
 	private Signe signe;
 	private Maison maison;
+	
+	private List<Special> listeSpecial = new ArrayList<>();
 	
 	private List<ThemeAspect> listeAspect = new ArrayList<>();
 	
@@ -34,10 +37,10 @@ public class ThemePointFixe {
 	}
 	
 	public boolean isRetrograde() {
-		return retrograde;
+		return listeSpecial.contains(Special.RETROGRADE);
 	}
-	public void setRetrograde(boolean retrograde) {
-		this.retrograde = retrograde;
+	public void setRetrograde() {
+		listeSpecial.add(Special.RETROGRADE);
 	}
 	
 	public Signe getSigne() {
