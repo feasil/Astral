@@ -1,12 +1,14 @@
 package fr.feasil.astral.main;
 
-import fr.feasil.astral.rule.DataLoader;
+import fr.feasil.astral.rule.DataRules;
+import fr.feasil.astral.rule.instance.ExcelDataRules;
 import fr.feasil.astral.theme.Theme;
 import fr.feasil.astral.theme.instance.ExcelTheme;
 import fr.feasil.astral.theme.instance.TextTheme;
 import fr.feasil.astral.theme.ruleengine.expression.OperationAnd;
 import fr.feasil.astral.theme.ruleengine.expression.OperationEn;
 import fr.feasil.astral.theme.ruleengine.expression.OperationNot;
+import fr.feasil.astral.theme.ruleengine.ActionDispatcher;
 import fr.feasil.astral.theme.ruleengine.expression.Operation;
 import fr.feasil.astral.theme.ruleengine.expression.Operations;
 
@@ -26,7 +28,12 @@ public class MainTest {
 		operations.registerOperation(ot, "non"); operations.registerOperation(ot, "NON");
 		
 		
-		DataLoader data = new DataLoader("in/DataTest.xlsx");
+		DataRules data = new ExcelDataRules(new ActionDispatcher() {
+			@Override
+			public void fire(Object argument) {
+				System.out.println(argument);
+			}
+		}, "in/DataTest.xlsx");
 		
 		Theme themeExcel = new ExcelTheme("in/ThemeTest.xlsx");
 		Theme themeText = new TextTheme("Positions des planètes\r\n" + 
@@ -108,8 +115,8 @@ public class MainTest {
 				"Lune 	SemiSextile 	Pluton 	Orbe 	0°54'");
 		System.out.println("--------------------------");
 		
-		data.getRules().eval(themeExcel);
-		data.getRules().eval(themeText);
+		data.eval(themeExcel);
+		data.eval(themeText);
 		
 		
 				

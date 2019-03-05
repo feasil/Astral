@@ -17,7 +17,7 @@ import fr.feasil.utils.xlsloader.ExcelFile;
 import fr.feasil.utils.xlsloader.ExcelSheet;
 
 
-public class ExcelTheme implements Theme {
+public class ExcelTheme extends Theme {
 	private final static String[][] POSITIONS_PLANETES = {{"Positions des planètes"}, {"planete", "position", "retrograde", "signe"}};
 	private final static String[][] PLANETES_MAISONS = {{"Planètes en maisons"}, {"planete", "maison"}};
 	private final static String[][] POSITIONS_MAISONS = {{"Positions des maisons"}, {"maison", "position", "signe"}};
@@ -37,10 +37,11 @@ public class ExcelTheme implements Theme {
 		loadAspects();
 	}
 	
+	@Override
 	public List<ThemePointFixe> getListePointFixe() {
 		return listePointFixe;
 	}
-	
+	@Override
 	public List<ThemeMaison> getListeMaison() {
 		return listeMaison;
 	}

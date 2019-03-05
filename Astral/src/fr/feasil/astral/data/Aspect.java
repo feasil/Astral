@@ -3,23 +3,25 @@ package fr.feasil.astral.data;
 import fr.feasil.utils.CharUtils;
 
 public enum Aspect implements ThemeElement {
-	CONJONCTION("Conjonction"), 
-	SEMICARRE("Semi-carré"), 
-	SEXTILE("Sextile"), 
-	CARRE("Carré"), 
-	TRIGONE("Trigone"), 
-	SESQUICARRE("Sesqui-carré"), 
-	QUINCONCE("Quinconce"), 
-	OPPOSITION("Opposition"), 
-	SEMISEXTILE("Semi-sextile"), 
-	QUINTILE("Quintile"),
-	BIQUINTILE("Biquintile"); 
+	CONJONCTION("Conjonction", "☌"),
+	OPPOSITION("Opposition", "☍"), 
+	SEMICARRE("Semi-carré", null), 
+	SEXTILE("Sextile", null), 
+	CARRE("Carré", null), 
+	TRIGONE("Trigone", null), 
+	SESQUICARRE("Sesqui-carré", null), 
+	QUINCONCE("Quinconce", null), 
+	SEMISEXTILE("Semi-sextile", null), 
+	QUINTILE("Quintile", null),
+	BIQUINTILE("Biquintile", null); 
 	
 	
 	private String nom;
+	private String symbole;
 	
-	private Aspect(String nom) {
+	private Aspect(String nom, String symbole) {
 		this.nom = nom;
+		this.symbole = symbole;
 	}
 	
 	public String getNom() {
@@ -32,7 +34,8 @@ public enum Aspect implements ThemeElement {
 		nom = CharUtils.removeAccent(nom.replaceAll("-", ""));
 		
 		for ( Aspect a : values() ) 
-			if ( nom.equalsIgnoreCase(CharUtils.removeAccent(a.getNom().replaceAll("-", "")))  )
+			if ( nom.equalsIgnoreCase(CharUtils.removeAccent(a.getNom().replaceAll("-", "")))
+					|| (a.symbole != null && nom.equalsIgnoreCase(a.symbole)) )
 				return a;
 		
 		return null;

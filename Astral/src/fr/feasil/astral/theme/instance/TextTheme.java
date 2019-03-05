@@ -15,7 +15,7 @@ import fr.feasil.astral.theme.ThemeMaison;
 import fr.feasil.astral.theme.ThemePointFixe;
 
 
-public class TextTheme implements Theme {
+public class TextTheme extends Theme {
 //	private final static String[][] POSITIONS_PLANETES = {{"Positions des planètes"}, {"planete", "position", "retrograde", "signe"}};
 //	private final static String[][] PLANETES_MAISONS = {{"Planètes en maisons"}, {"planete", "maison"}};
 //	private final static String[][] POSITIONS_MAISONS = {{"Positions des maisons"}, {"maison", "position", "signe"}};
@@ -39,10 +39,11 @@ public class TextTheme implements Theme {
 		loadAspects();
 	}
 	
+	@Override
 	public List<ThemePointFixe> getListePointFixe() {
 		return listePointFixe;
 	}
-	
+	@Override
 	public List<ThemeMaison> getListeMaison() {
 		return listeMaison;
 	}
