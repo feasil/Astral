@@ -9,6 +9,10 @@ public class Profil {
 	private Theme theme;
 	
 	
+	public Profil() {
+		this(null, null, null);
+	}
+	
 	public Profil(String nom, Genre genre, Theme theme) {
 		this.nom = nom;
 		this.genre = genre;
