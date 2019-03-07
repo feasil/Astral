@@ -11,6 +11,8 @@ import fr.feasil.astral.graphic.FenetreAstral;
 
 public class LauncherAstral {
 	
+	private final static String SQLITE_FILENAME = "in/DataAstral.db";
+	
 	public static void main(String[] args) {
 		
 		//Fichiers non externalisés
@@ -34,7 +36,7 @@ public class LauncherAstral {
 		//
 		
 		
-		FenetreAstral fen = new FenetreAstral("Astralopithecus v" + version + "." + subversion);
+		FenetreAstral fen = new FenetreAstral("Astralopithecus v" + version + "." + subversion, SQLITE_FILENAME);
 		fen.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent evt) {
 					if ( evt.getSource() instanceof FenetreAstral )

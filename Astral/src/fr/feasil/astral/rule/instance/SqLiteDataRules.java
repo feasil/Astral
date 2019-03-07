@@ -14,11 +14,11 @@ import fr.feasil.astral.theme.ruleengine.ExpressionParser;
 public class SqLiteDataRules extends DataRules {
 	private final static String URL_START = "jdbc:sqlite:";
 	
-	private String fileName;
+	private String sqLiteFile;
 	
-	public SqLiteDataRules(ActionDispatcher dispatcher, String fileName) {
+	public SqLiteDataRules(ActionDispatcher dispatcher, String sqLiteFile) {
 		super(dispatcher);
-		this.fileName = fileName;
+		this.sqLiteFile = sqLiteFile;
 		
 		loadData();
 	}
@@ -27,14 +27,8 @@ public class SqLiteDataRules extends DataRules {
 		Connection conn = null;
 		try {
 			// create a connection to the database
-			conn = DriverManager.getConnection(URL_START + fileName);
+			conn = DriverManager.getConnection(URL_START + sqLiteFile);
 			Statement stmt = conn.createStatement();
-//			String sql = "CREATE TABLE IF NOT EXISTS profil (\n"
-//						+ "	id integer PRIMARY KEY AUTOINCREMENT,\n"
-//						+ "	nom text NOT NULL,\n"
-//						+ "	genre text\n"
-//						+ "	theme text\n"
-//						+ ");";
 			String sql = "CREATE TABLE IF NOT EXISTS data (\n"
 						+ "	id integer PRIMARY KEY AUTOINCREMENT,\n"
 						+ "	expression text NOT NULL,\n"

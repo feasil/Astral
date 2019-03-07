@@ -2,21 +2,20 @@ package fr.feasil.astral.profil;
 
 import fr.feasil.astral.theme.Theme;
 
-public class Profil {
-	
+public abstract class Profil {
 	private String nom;
 	private Genre genre;
 	private Theme theme;
-	
-	
-	public Profil() {
-		this(null, null, null);
-	}
+	private long dateCreation;
 	
 	public Profil(String nom, Genre genre, Theme theme) {
+		this(nom, genre, theme, System.currentTimeMillis());
+	}
+	public Profil(String nom, Genre genre, Theme theme, long dateCreation) {
 		this.nom = nom;
 		this.genre = genre;
 		this.theme = theme;
+		this.dateCreation = dateCreation;
 	}
 	
 	public void setNom(String nom) {
@@ -36,5 +35,11 @@ public class Profil {
 	}
 	public Theme getTheme() {
 		return theme;
+	}
+	public void setDateCreation(long dateCreation) {
+		this.dateCreation = dateCreation;
+	}
+	public long getDateCreation() {
+		return dateCreation;
 	}
 }

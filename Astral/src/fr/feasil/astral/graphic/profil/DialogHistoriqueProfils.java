@@ -1,5 +1,6 @@
 package fr.feasil.astral.graphic.profil;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,15 +14,26 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import fr.feasil.astral.data.point.Angle;
+import fr.feasil.astral.data.point.Planete;
+import fr.feasil.astral.profil.Genre;
+import fr.feasil.astral.profil.Profil;
+import fr.feasil.astral.profil.ProfilManager;
 
 public class DialogHistoriqueProfils extends JDialog implements Observer {
 	private static final long serialVersionUID = 1L;
@@ -32,20 +44,25 @@ public class DialogHistoriqueProfils extends JDialog implements Observer {
 	private JScrollPane scrollImport;
 	//----------
 	private JLabel lblProfils;
+	private JPanel panBtnProfils;
 	private List<JButton> btnProfils;
 	//----------
 	private JButton btnGenerer;
 	//----------
+	private JPanel panProfil, panBtnTheme;
+	private JLabel lblNom, lblGenre;
+	private JTextField txtNom;
+	private JComboBox<Genre> cbGenre;
+	private List<JButton> btnTheme;
+	//----------
+	
 	
 	private ModelHistoriqueProfils model;
 	private List<ProfilSelectedListener> listeners = new ArrayList<>();
 	
-	public DialogHistoriqueProfils(JFrame parent) {
+	public DialogHistoriqueProfils(JFrame parent, ProfilManager<Profil> profilManager) {
 		super(parent, "Profils", true);
-		initComponents();
-		addComponents();
-		
-		model = new ModelHistoriqueProfils();
+		model = new ModelHistoriqueProfils(profilManager);
 		model.addObserver(this);
 		addWindowListener(new WindowAdapter() {
 		    @Override
@@ -54,8 +71,10 @@ public class DialogHistoriqueProfils extends JDialog implements Observer {
 		    	listeners.clear();
 		    }
 		});
+		initComponents();
+		addComponents();
 		
-		setPreferredSize(new Dimension(600, 400));
+		setPreferredSize(new Dimension(800, 500));
 		setText();
 	}
 	private void initComponents() {
@@ -71,33 +90,134 @@ public class DialogHistoriqueProfils extends JDialog implements Observer {
 		lblProfils = new JLabel("Derniers Profils");
 		lblProfils.setFont(lblProfils.getFont().deriveFont(20f));
 		lblProfils.setPreferredSize(new Dimension(10, 50));
+		panBtnProfils = new JPanel(new GridBagLayout());
+		ActionListener alBtnProfil = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.selectProfil(Integer.parseInt(e.getActionCommand()));
+			}
+		};
 		btnProfils = new ArrayList<>();
+		for ( int i = 0 ; i < 9 ; i++ ) {
+			JButton btn = new JButton();
+			btn.setMargin(new Insets(1, 1, 1, 1));
+			if ( i < model.getLastProfils().size() ) {
+				btn.setText(model.getLastProfils().get(i).getNom());
+				btn.setActionCommand(Integer.toString(i));
+				btn.addActionListener(alBtnProfil);
+			}
+			else
+				btn.setEnabled(false);
+			
+			btnProfils.add(btn);
+		}
 		//----------
 		btnGenerer = new JButton("Générer le thème");
+		btnGenerer.setActionCommand("genererTheme");
 		btnGenerer.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.createProfil(txtImport.getText());
+				if ( "genererTheme".equals(e.getActionCommand()) ) {
+					model.createProfil(txtImport.getText());
+				}
+				else if ( "finishProfil".equals(e.getActionCommand()) ) {
+					if ( txtNom.getText() == null 
+							|| txtNom.getText().trim().length() == 0 ) {
+						JOptionPane.showMessageDialog(DialogHistoriqueProfils.this, "Le nom doit être renseigné", "Erreur", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if ( cbGenre.getSelectedItem() == null ) {
+						JOptionPane.showMessageDialog(DialogHistoriqueProfils.this, "Le genre doit être renseigné", "Erreur", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					model.finishProfil(txtNom.getText(), (Genre) cbGenre.getSelectedItem());
+				}
+					
 			}
 		});
+		//----------
+		
+		panProfil = new JPanel(new GridBagLayout());
+		panProfil.setVisible(false);
+		panBtnTheme = new JPanel(new GridBagLayout());
+		panBtnTheme.setVisible(false);
+		lblNom = new JLabel("Nom : ");
+		lblGenre = new JLabel("Genre : ");
+		txtNom = new JTextField();
+		cbGenre = new JComboBox<>();
+		cbGenre.addItem(null); for ( Genre g : Genre.values() ) cbGenre.addItem(g);
+		cbGenre.setRenderer(new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				String str;
+				if ( value instanceof Genre )
+					str = ((Genre)value).getSymbole() + " " + ((Genre)value).getLibelle();
+				else 
+					str = " ";
+				return super.getListCellRendererComponent(list, str, index, isSelected, cellHasFocus);
+			}
+		});
+		btnTheme = new ArrayList<>();
+		for ( int i = 0 ; i < 3 ; i++ ) {
+			JButton btn = new JButton();
+			btn.setMargin(new Insets(1, 1, 1, 1));
+			btn.setEnabled(false);
+			btnTheme.add(btn);
+		}
 		//----------
 		
 	}
 	private void addComponents() {
 		JPanel panB = new JPanel(new GridBagLayout());
-		JPanel panBtn = new JPanel(new GridBagLayout());
-		
 		GridBagConstraints gbc = new GridBagConstraints();
 		
-		//panBtn
+		//panBtnProfils
 		gbc.insets = new Insets(4, 4, 4, 4);
 		gbc.weightx = 1; gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		for ( int i = 0 ; i< btnProfils.size() ; i++  ) {
 			gbc.gridx = i%3; gbc.gridy = (int) i/3;
-			panBtn.add(btnProfils.get(i), gbc);
+			panBtnProfils.add(btnProfils.get(i), gbc);
 		}
 		//----------
+		//panBtnTheme
+		gbc.insets = new Insets(4, 4, 4, 4);
+		gbc.weightx = 1; gbc.weighty = 0;
+		gbc.fill = GridBagConstraints.BOTH;
+		for ( int i = 0 ; i< btnTheme.size() ; i++  ) {
+			gbc.gridx = i%3; gbc.gridy = (int) i/3;
+			panBtnTheme.add(btnTheme.get(i), gbc);
+		}
+		gbc.gridwidth = 3;
+		gbc.weightx = 3; gbc.weighty = 1;
+		gbc.gridx = 0; gbc.gridy ++;
+		panBtnTheme.add(new JPanel(), gbc);
+		gbc.gridwidth = 1;
+		//----------
+		//panProfil
+		gbc.insets = new Insets(4, 2, 4, 2);
+		gbc.weightx = 0; gbc.weighty = 0;
+		gbc.gridx = 0; gbc.gridy = 0;
+		gbc.fill = GridBagConstraints.NONE;
+		panProfil.add(lblNom, gbc);
+		gbc.gridx = 0; gbc.gridy = 1;
+		panProfil.add(lblGenre, gbc);
+		gbc.weightx = 1; gbc.weighty = 0;
+		gbc.gridx = 1; gbc.gridy = 0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		panProfil.add(txtNom, gbc);
+		gbc.gridx = 1; gbc.gridy = 1;
+		panProfil.add(cbGenre, gbc);
+		
+		gbc.gridwidth = 2;
+		gbc.weightx = 2; gbc.weighty = 1;
+		gbc.gridx = 0; gbc.gridy = 2;
+		gbc.fill = GridBagConstraints.BOTH;
+		panProfil.add(new JPanel(), gbc);
+		gbc.gridwidth = 1;
+		//----------
+		
 		
 		//panB
 		gbc.gridx = 0; gbc.gridy = 0;
@@ -119,6 +239,7 @@ public class DialogHistoriqueProfils extends JDialog implements Observer {
 		gbc.weightx = 1; gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		getContentPane().add(scrollImport, gbc);
+		getContentPane().add(panProfil, gbc);
 		
 		gbc.gridheight = 2;
 		gbc.gridx = 1; gbc.gridy = 0;
@@ -137,7 +258,8 @@ public class DialogHistoriqueProfils extends JDialog implements Observer {
 		gbc.insets = new Insets(4, 2, 4, 2);
 		gbc.weightx = 1; gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
-		getContentPane().add(panBtn, gbc);
+		getContentPane().add(panBtnProfils, gbc);
+		getContentPane().add(panBtnTheme, gbc);
 		//----------
 		
 		gbc.gridwidth = 3;
@@ -276,11 +398,23 @@ public class DialogHistoriqueProfils extends JDialog implements Observer {
 		if ( o == model ) {
 			if ( args instanceof String ) {
 				if ( "createProfil".equals(args) ){
+					btnTheme.get(0).setText("<html><center><div style='font-size:12;'>" + Planete.SOLEIL.getNom() + "</div><br><div style='font-size:10;'>" + model.getProfil().getTheme().getSigne(Planete.SOLEIL) + "</div></center></html>");
+					btnTheme.get(1).setText("<html><center><div style='font-size:12;'>" + Angle.ASCENDANT.getNom() + "</div><br><div style='font-size:10;'>" + model.getProfil().getTheme().getSigne(Angle.ASCENDANT) + "</div></center></html>");
+					btnTheme.get(2).setText("<html><center><div style='font-size:12;'>" + Planete.LUNE.getNom() + "</div><br><div style='font-size:10;'>" + model.getProfil().getTheme().getSigne(Planete.LUNE) + "</div></center></html>");
+					
+					btnGenerer.setText("Valider");
+					btnGenerer.setActionCommand("finishProfil");
+					lblImport.setText("Création du profil");
+					lblProfils.setText("");
+					scrollImport.setVisible(false);
+					panProfil.setVisible(true);
+					panBtnProfils.setVisible(false);
+					panBtnTheme.setVisible(true);
+				}
+				else if ( "finishProfil".equals(args) ){
 					for ( ProfilSelectedListener l : listeners )
 						l.profilSelected(model.getProfil());
-					
 					dispose();
-					//TODO changer de fenetre
 				}
 			}
 		}

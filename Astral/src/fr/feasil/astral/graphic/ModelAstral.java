@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Observable;
 
 import fr.feasil.astral.profil.Profil;
+import fr.feasil.astral.profil.instance.SqLiteProfilManager;
 import fr.feasil.astral.rule.DataRules;
 import fr.feasil.astral.rule.instance.SqLiteDataRules;
 import fr.feasil.astral.theme.ruleengine.ActionDispatcher;
@@ -16,11 +17,14 @@ import fr.feasil.astral.theme.ruleengine.expression.Operations;
 
 public class ModelAstral extends Observable {
 	
+	private final SqLiteProfilManager profilManager;
 	private final DataRules datas;
 	private Profil profil;
 	private List<String> themeEvals;
 	
-	public ModelAstral() {
+	public ModelAstral(String sqLiteFile) {
+		this.profilManager = SqLiteProfilManager.getManager(sqLiteFile);
+		
 		Operations operations = Operations.INSTANCE;
 		// register new operations with the previously created container
 		Operation ot = new OperationAnd();
@@ -34,7 +38,11 @@ public class ModelAstral extends Observable {
 		
 		themeEvals = new ArrayList<>();
 //		datas = new ExcelDataRules(new Dispatcher(), "in/DataTest.xlsx");
-		datas = new SqLiteDataRules(new Dispatcher(), "in/DataAstral.db");
+		datas = new SqLiteDataRules(new Dispatcher(), sqLiteFile);
+	}
+	
+	public SqLiteProfilManager getProfilManager() {
+		return profilManager;
 	}
 	
 	public void setProfil(Profil profil) {
@@ -73,4 +81,5 @@ public class ModelAstral extends Observable {
 				themeEvals.add(argument.toString());
 		}
 	}
+
 }

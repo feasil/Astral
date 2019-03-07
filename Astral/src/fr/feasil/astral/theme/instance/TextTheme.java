@@ -21,16 +21,17 @@ public class TextTheme extends Theme {
 //	private final static String[][] POSITIONS_MAISONS = {{"Positions des maisons"}, {"maison", "position", "signe"}};
 //	private final static String[][] LISTE_ASPECTS = {{"Liste des aspects"}, {"planete principale", "aspect", "planete secondaire", "orbe"}};
 	
-	
+	private String textContent;
 	private String[] lines;
 	private List<ThemePointFixe> listePointFixe = new ArrayList<>();
 	private List<ThemeMaison> listeMaison = new ArrayList<>();
 	
 	
-	public TextTheme(String content) {
-		if ( content == null )
+	public TextTheme(String textContent) {
+		if ( textContent == null )
 			return;
-		this.lines = content.replaceAll("\r", "").split("\n");
+		this.textContent = textContent;
+		this.lines = textContent.replaceAll("\r", "").split("\n");
 		
 		
 		loadPositionPlanetes();
@@ -49,7 +50,9 @@ public class TextTheme extends Theme {
 	}
 	
 	
-	
+	public String getTextContent() {
+		return textContent;
+	}
 	
 	
 	private void loadPositionPlanetes() {
