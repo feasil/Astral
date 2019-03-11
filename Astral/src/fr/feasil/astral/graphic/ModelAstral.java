@@ -8,7 +8,6 @@ import fr.feasil.astral.profil.Profil;
 import fr.feasil.astral.profil.instance.SqLiteProfilManager;
 import fr.feasil.astral.rule.DataRules;
 import fr.feasil.astral.rule.instance.SqLiteDataRules;
-import fr.feasil.astral.theme.ruleengine.ActionDispatcher;
 import fr.feasil.astral.theme.ruleengine.expression.Operation;
 import fr.feasil.astral.theme.ruleengine.expression.OperationAnd;
 import fr.feasil.astral.theme.ruleengine.expression.OperationEn;
@@ -18,7 +17,7 @@ import fr.feasil.astral.theme.ruleengine.expression.Operations;
 public class ModelAstral extends Observable {
 	
 	private final SqLiteProfilManager profilManager;
-	private final DataRules datas;
+	private final DataRules dataRules;
 	private Profil profil;
 	private List<String> themeEvals;
 	
@@ -38,7 +37,7 @@ public class ModelAstral extends Observable {
 		
 		themeEvals = new ArrayList<>();
 //		datas = new ExcelDataRules(new Dispatcher(), "in/DataTest.xlsx");
-		datas = new SqLiteDataRules(new Dispatcher(), sqLiteFile);
+		dataRules = new SqLiteDataRules(new ModelAstralAD(this), sqLiteFile);
 	}
 	
 	public SqLiteProfilManager getProfilManager() {
@@ -59,7 +58,7 @@ public class ModelAstral extends Observable {
 	private boolean evaluateProfile() {
 		if ( profil != null && profil.getTheme() != null ) {
 			themeEvals.clear();
-			boolean retour = datas.eval(profil.getTheme());
+			boolean retour = dataRules.eval(profil.getTheme());
 			setChanged();
 			notifyObservers("evaluate");
 			
@@ -72,14 +71,14 @@ public class ModelAstral extends Observable {
 		return themeEvals;
 	}
 	
-	
-	
-	private class Dispatcher implements ActionDispatcher {
-		@Override
-		public void fire(Object argument) {
-			if ( argument != null )
-				themeEvals.add(argument.toString());
-		}
+	public DataRules getDataRules() {
+		return dataRules;
 	}
+	
+	void addEval(String eval) {
+		themeEvals.add(eval);
+	}
+	
+	
 
 }

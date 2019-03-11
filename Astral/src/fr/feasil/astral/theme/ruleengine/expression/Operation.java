@@ -51,6 +51,20 @@ public abstract class Operation implements Expression
 		return null;
 	}
 	
+	@Override
+	public String getStringValue() {
+		StringBuilder sb = new StringBuilder();
+		if ( leftOperand != null ) {
+			sb.append(leftOperand.getStringValue());
+			sb.append(" ");
+		}
+		sb.append(symbol);
+		if ( rightOperand != null ) {
+			sb.append(" ");
+			sb.append(rightOperand.getStringValue());
+		}
+		return sb.toString();
+	}
 	
 	
 	protected boolean interpretPointFixeMaison(Theme theme, PointFixe pointFixe, Maison maison) {

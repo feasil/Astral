@@ -7,18 +7,10 @@ import fr.feasil.astral.theme.ruleengine.Expression;
 
 public class ExpressionThemeElement implements Expression
 {
-	private String name;
 	private ThemeElement themeElement;
 	
-	private ExpressionThemeElement(String name, ThemeElement themeElement)
-	{
-		this.name = name;
-		this.themeElement = themeElement;;
-	}
-	
-	public String getName()
-	{
-		return this.name;
+	private ExpressionThemeElement(ThemeElement themeElement) {
+		this.themeElement = themeElement;
 	}
 	
 	public ThemeElement getThemeElement() {
@@ -26,9 +18,13 @@ public class ExpressionThemeElement implements Expression
 	}
 	
 	@Override
-	public boolean interpret(Theme theme)
-	{
+	public boolean interpret(Theme theme) {
 		return true;
+	}
+	
+	@Override
+	public String getStringValue() {
+		return themeElement.getNom();
 	}
 	
 	
@@ -38,7 +34,7 @@ public class ExpressionThemeElement implements Expression
 		
 		ThemeElement themeElement = ThemeElementFactory.getThemeElement(string);
 		if ( themeElement != null )
-			return new ExpressionThemeElement(string, themeElement);
+			return new ExpressionThemeElement(themeElement);
 		
 		return null;
 	}

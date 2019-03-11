@@ -54,7 +54,7 @@ public class Rule
 		{
 			eval = expression.interpret(theme);
 			if (eval)
-				dispatcher.fire(argument);
+				dispatcher.fire(expression, argument);
 		}
 		return eval;
 	}

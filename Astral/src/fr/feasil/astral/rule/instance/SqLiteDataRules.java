@@ -47,4 +47,9 @@ public class SqLiteDataRules extends DataRules {
 			try { if (conn != null) conn.close(); } catch (SQLException ex) { }
 		}
 	}
+
+	@Override
+	public DataRules newInstance(ActionDispatcher dispatcher) {
+		return new SqLiteDataRules(dispatcher, sqLiteFile);
+	}
 }

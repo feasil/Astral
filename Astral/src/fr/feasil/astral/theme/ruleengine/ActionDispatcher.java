@@ -1,5 +1,5 @@
 package fr.feasil.astral.theme.ruleengine;
 
 public interface ActionDispatcher {
-	public void fire(Object argument);
+	public void fire(Expression expression, Object argument);
 }

@@ -35,4 +35,5 @@ public abstract class DataRules {
 		return triggered;
 	}
 	
+	public abstract DataRules newInstance(ActionDispatcher dispatcher);
 }

@@ -45,4 +45,9 @@ public class ExcelDataRules extends DataRules {
 			}
 		}
 	}
+	
+	@Override
+	public DataRules newInstance(ActionDispatcher dispatcher) {
+		return new ExcelDataRules(dispatcher, file.getFileName());
+	}
 }

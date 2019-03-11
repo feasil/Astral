@@ -9,6 +9,7 @@ import fr.feasil.astral.theme.ruleengine.expression.OperationAnd;
 import fr.feasil.astral.theme.ruleengine.expression.OperationEn;
 import fr.feasil.astral.theme.ruleengine.expression.OperationNot;
 import fr.feasil.astral.theme.ruleengine.ActionDispatcher;
+import fr.feasil.astral.theme.ruleengine.Expression;
 import fr.feasil.astral.theme.ruleengine.expression.Operation;
 import fr.feasil.astral.theme.ruleengine.expression.Operations;
 
@@ -30,7 +31,7 @@ public class MainTest {
 		
 		DataRules data = new ExcelDataRules(new ActionDispatcher() {
 			@Override
-			public void fire(Object argument) {
+			public void fire(Expression expression, Object argument) {
 				System.out.println(argument);
 			}
 		}, "in/DataTest.xlsx");

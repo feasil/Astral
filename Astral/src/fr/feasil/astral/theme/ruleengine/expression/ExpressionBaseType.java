@@ -29,6 +29,10 @@ public class ExpressionBaseType<T> implements Expression
 	{
 		return true;
 	}
+	@Override
+	public String getStringValue() {
+		return value.toString();
+	}
 	
 	public static ExpressionBaseType<?> getBaseType(String string)
 	{
