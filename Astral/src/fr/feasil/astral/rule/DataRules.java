@@ -2,6 +2,7 @@ package fr.feasil.astral.rule;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import fr.feasil.astral.theme.Theme;
 import fr.feasil.astral.theme.ruleengine.ActionDispatcher;
@@ -16,16 +17,28 @@ public abstract class DataRules {
 	private List<Rule> rules = new ArrayList<>();
 	private ActionDispatcher dispatcher;
 	
+	private List<DataRulesListener> listeners = new ArrayList<>();
+	
 	public DataRules(ActionDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 	}
 	
-	protected void addRule(Expression expression, Object argument) {
-		rules.add(new Rule.Builder()
+	protected Rule addRule(Expression expression, Object argument) {
+		Rule rule = new Rule.Builder()
 				.withExpression(expression)
 				.withDispatcher(dispatcher)
 				.withArgument(argument)
-				.build());
+				.build();
+		rules.add(rule);
+		return rule;
+	}
+	
+	protected void clearRules() {
+		rules.clear();
+	}
+	protected void fireReloaded() {
+		for ( DataRulesListener l : listeners )
+			l.rulesReloaded();
 	}
 	
 	public boolean eval(Theme theme) {
@@ -35,5 +48,16 @@ public abstract class DataRules {
 		return triggered;
 	}
 	
+	public void addDataRulesListener(DataRulesListener listener) {
+		listeners.add(listener);
+	}
+	public void removeDataRulesListener(DataRulesListener listener) {
+		listeners.remove(listener);
+	}
+	
+//	public abstract void reload();
 	public abstract DataRules newInstance(ActionDispatcher dispatcher);
+	public abstract void insertRules(Map<Expression, Object> newRules);
+	public abstract void insertRule(Expression expression, Object argument);
+	
 }

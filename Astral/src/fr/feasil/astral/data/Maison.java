@@ -20,10 +20,15 @@ public enum Maison implements ThemeElement {
 	private Maison(String nom) {
 		this.nom = nom;
 	}
-	
+	@Override
 	public String getNom() {
 		return nom;
 	}
+	@Override
+	public String getExpression() {
+		return getNom().replaceAll(" ", "_");
+	}
+	
 	public int getNumero() {
 		return ordinal()+1;
 	}

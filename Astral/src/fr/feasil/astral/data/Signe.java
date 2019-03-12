@@ -31,10 +31,15 @@ public enum Signe implements ThemeElement {
 		this.element = element;
 		this.modalite = modalite;
 	}
-	
+	@Override
 	public String getNom() {
 		return nom;
 	}
+	@Override
+	public String getExpression() {
+		return getNom();
+	}
+	
 	public String getSymbole() {
 		return symbole;
 	}

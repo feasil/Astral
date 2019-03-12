@@ -11,9 +11,15 @@ public enum Special implements ThemeElement {
 		this.symbole = symbole;
 	}
 	
+	@Override
 	public String getNom() {
 		return nom;
 	}
+	@Override
+	public String getExpression() {
+		return getNom();
+	}
+	
 	public String getSymbole() {
 		return symbole;
 	}

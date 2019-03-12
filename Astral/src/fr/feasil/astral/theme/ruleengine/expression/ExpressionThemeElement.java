@@ -26,7 +26,10 @@ public class ExpressionThemeElement implements Expression
 	public String getStringValue() {
 		return themeElement.getNom();
 	}
-	
+	@Override
+	public String getExpressionValue() {
+		return themeElement.getExpression();
+	}
 	
 	public static ExpressionThemeElement getExpressionElementTheme(String string) {
 		if (string == null)

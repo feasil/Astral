@@ -24,6 +24,11 @@ public enum Asteroide implements PointFixe {
 		return nom;
 	}
 	@Override
+	public String getExpression() {
+		return getNom();
+	}
+	
+	@Override
 	public String getSymbole() {
 		return symbole;
 	}

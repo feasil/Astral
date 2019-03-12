@@ -23,9 +23,13 @@ public enum Aspect implements ThemeElement {
 		this.nom = nom;
 		this.symbole = symbole;
 	}
-	
+	@Override
 	public String getNom() {
 		return nom;
+	}
+	@Override
+	public String getExpression() {
+		return getNom();
 	}
 	
 	public static Aspect getAspect(String nom) {

@@ -1,14 +1,15 @@
 package fr.feasil.astral.graphic.datamissing;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,6 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 import fr.feasil.astral.profil.Profil;
 import fr.feasil.astral.rule.DataRules;
@@ -39,7 +42,6 @@ public class DialogDataMissing extends JDialog implements Observer {
 	
 	
 	private ModelDataMissing model;
-	private List<DataMissingListener> listeners = new ArrayList<>();
 	
 	public DialogDataMissing(JFrame parent, DataRules dataRules, Profil profil) {
 		super(parent, "Informations manquantes", true);
@@ -49,14 +51,11 @@ public class DialogDataMissing extends JDialog implements Observer {
 		    @Override
 		    public void windowClosed(WindowEvent e) {
 		    	model.deleteObserver(DialogDataMissing.this);
-		    	listeners.clear();
 		    }
 		});
 		
 		initComponents();
 		addComponents();
-		
-		model.loadDataMissing();
 		
 		setPreferredSize(new Dimension(800, 500));
 	}
@@ -73,18 +72,51 @@ public class DialogDataMissing extends JDialog implements Observer {
 			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				setText(((Expression)value).getStringValue());
+				boolean hasChanged = (model.getText((Expression) value) != null );
+				setText(((Expression)value).getStringValue() + (hasChanged?" *":""));
+				if ( hasChanged )
+					setForeground(Color.BLUE);
 				return this;
 			}
 		});
+		cbExpression.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.setSelectedIndex(cbExpression.getSelectedIndex());
+			}
+		});
 		txtArgument = new JTextArea();
+		txtArgument.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				model.setSelectedText(txtArgument.getText());
+				cbExpression.repaint();
+			}
+		});
 		scrollArgument = new JScrollPane(txtArgument, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		//----------
 		btnPrecedent = new JButton("< Précédent");
+		btnPrecedent.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.decrementeIndex();
+			}
+		});
 		btnSuivant = new JButton("Suivant >");
+		btnSuivant.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.incrementeIndex();
+			}
+		});
 		btnTerminer = new JButton("Terminer");
+		btnTerminer.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				terminer();
+			}
+		});
 		//----------
-		//TODO actionListeners
 	}
 	
 	private void addComponents() {
@@ -133,8 +165,13 @@ public class DialogDataMissing extends JDialog implements Observer {
 		getContentPane().add(btnTerminer, gbc);
 	}
 	
-	
+	/**
+	 * Ne s'afffiche que si des données sont manquantes
+	 */
 	public void afficher() {
+		model.loadDataMissing();
+	}
+	private void fireAfficher() {
 		Runnable doRun = new Runnable() {
             @Override
             public void run() {
@@ -148,22 +185,34 @@ public class DialogDataMissing extends JDialog implements Observer {
 	}
 	
 	
-	public void addDataMissingListener(DataMissingListener listener) {
-		listeners.add(listener);
+	
+	private void terminer() {
+		model.insertRules();
+		dispose();
 	}
-	public void deleteDataMissingListener(DataMissingListener listener) {
-		listeners.remove(listener);
-	}
+	
 	
 	@Override
 	public void update(Observable observable, Object args) {
 		if ( observable == model ) {
 			if ( args instanceof String ) {
 				if ( "missingReady".equals(args) ) {
-					//TODO
 					for ( Expression e : model.getListMissing() )
 						cbExpression.addItem(e);
+					
+					if ( model.getListMissing().size() > 0 )
+						fireAfficher();
+					else 
+						dispose();
 				}
+				else if ( "indexChanged".equals(args) ) {
+					cbExpression.setSelectedItem(model.getSelectedValue());
+					txtArgument.setText(model.getSelectedText());
+					
+					btnPrecedent.setEnabled(!model.isFirstIndex());
+					btnSuivant.setEnabled(!model.isLastIndex());
+				}
+					
 			}
 		}
 	}

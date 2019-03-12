@@ -33,6 +33,10 @@ public class ExpressionBaseType<T> implements Expression
 	public String getStringValue() {
 		return value.toString();
 	}
+	@Override
+	public String getExpressionValue() {
+		return getStringValue();
+	}
 	
 	public static ExpressionBaseType<?> getBaseType(String string)
 	{

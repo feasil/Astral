@@ -20,16 +20,13 @@ import javax.swing.JTextPane;
 
 import fr.feasil.astral.data.point.Angle;
 import fr.feasil.astral.data.point.Planete;
-import fr.feasil.astral.graphic.datamissing.DataMissingListener;
 import fr.feasil.astral.graphic.datamissing.DialogDataMissing;
 import fr.feasil.astral.graphic.profil.DialogHistoriqueProfils;
-import fr.feasil.astral.graphic.profil.ProfilSelectedListener;
-import fr.feasil.astral.profil.Profil;
 import fr.feasil.astral.profil.ProfilManager;
 import fr.feasil.utils.Utilitaire;
 
 
-public class FenetreAstral extends JFrame implements Observer, ProfilSelectedListener, DataMissingListener {
+public class FenetreAstral extends JFrame implements Observer {
 	private static final long serialVersionUID = 1L;
 	
 	//----------
@@ -135,7 +132,7 @@ public class FenetreAstral extends JFrame implements Observer, ProfilSelectedLis
 	private void genererTheme() {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		DialogHistoriqueProfils dialog = new DialogHistoriqueProfils(this, (ProfilManager)model.getProfilManager());
-		dialog.addProfilSelectedListener(this);
+		dialog.addProfilSelectedListener(model);
 		dialog.afficher();
 	}
 	
@@ -177,32 +174,13 @@ public class FenetreAstral extends JFrame implements Observer, ProfilSelectedLis
 					}
 					txtTheme.setText(sb.toString());
 					txtTheme.setCaretPosition(0);
-					
-					//TODO
+				}
+				else if ( "dataMissing".equals(args) ) {
 					DialogDataMissing dialog = new DialogDataMissing(this, model.getDataRules(), model.getProfil());
-					dialog.addDataMissingListener(this);
 					dialog.afficher();
 				}
 			}
 		}
-	}
-
-	@Override
-	public void profilSelected(Profil profil) {
-		model.setProfil(profil);
-	}
-
-	@Override
-	public void dataMissingSuivant() {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void dataMissingPrecedant() {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public void dataMissingTerminer(boolean isChanged) {
-		// TODO Auto-generated method stub
 	}
 	
 }

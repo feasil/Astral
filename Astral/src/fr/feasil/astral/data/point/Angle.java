@@ -24,6 +24,11 @@ public enum Angle implements PointFixe {
 		return nom;
 	}
 	@Override
+	public String getExpression() {
+		return getNom().replaceAll(" ", "_");
+	}
+	
+	@Override
 	public String getSymbole() {
 		return symbole;
 	}

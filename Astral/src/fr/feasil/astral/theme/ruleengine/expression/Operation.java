@@ -65,6 +65,10 @@ public abstract class Operation implements Expression
 		}
 		return sb.toString();
 	}
+	@Override
+	public String getExpressionValue() {
+		return getStringValue();
+	}
 	
 	
 	protected boolean interpretPointFixeMaison(Theme theme, PointFixe pointFixe, Maison maison) {

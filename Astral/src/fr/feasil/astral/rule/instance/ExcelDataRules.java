@@ -2,9 +2,11 @@ package fr.feasil.astral.rule.instance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import fr.feasil.astral.rule.DataRules;
 import fr.feasil.astral.theme.ruleengine.ActionDispatcher;
+import fr.feasil.astral.theme.ruleengine.Expression;
 import fr.feasil.astral.theme.ruleengine.ExpressionParser;
 import fr.feasil.astral.theme.ruleengine.expression.Operation;
 import fr.feasil.astral.theme.ruleengine.expression.Operations;
@@ -45,9 +47,25 @@ public class ExcelDataRules extends DataRules {
 			}
 		}
 	}
+	@Override
+	public void insertRule(Expression expression, Object argument) {
+		//Do nothing : non implémenté à date
+	}
+	@Override
+	public void insertRules(Map<Expression, Object> newRules) {
+		//Do nothing : non implémenté à date
+	}
 	
 	@Override
 	public DataRules newInstance(ActionDispatcher dispatcher) {
 		return new ExcelDataRules(dispatcher, file.getFileName());
 	}
+	
+	
+//	@Override
+//	public void reload() {
+//		clearRules();
+//		loadData();
+//		fireReloaded();
+//	}
 }

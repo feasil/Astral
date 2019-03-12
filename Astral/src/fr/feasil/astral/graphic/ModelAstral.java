@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import fr.feasil.astral.graphic.profil.ProfilSelectedListener;
 import fr.feasil.astral.profil.Profil;
 import fr.feasil.astral.profil.instance.SqLiteProfilManager;
 import fr.feasil.astral.rule.DataRules;
+import fr.feasil.astral.rule.DataRulesListener;
 import fr.feasil.astral.rule.instance.SqLiteDataRules;
 import fr.feasil.astral.theme.ruleengine.expression.Operation;
 import fr.feasil.astral.theme.ruleengine.expression.OperationAnd;
@@ -14,12 +16,14 @@ import fr.feasil.astral.theme.ruleengine.expression.OperationEn;
 import fr.feasil.astral.theme.ruleengine.expression.OperationNot;
 import fr.feasil.astral.theme.ruleengine.expression.Operations;
 
-public class ModelAstral extends Observable {
+public class ModelAstral extends Observable implements ProfilSelectedListener, DataRulesListener {
 	
 	private final SqLiteProfilManager profilManager;
 	private final DataRules dataRules;
 	private Profil profil;
 	private List<String> themeEvals;
+	
+	private boolean callDataMissing = false;
 	
 	public ModelAstral(String sqLiteFile) {
 		this.profilManager = SqLiteProfilManager.getManager(sqLiteFile);
@@ -38,6 +42,7 @@ public class ModelAstral extends Observable {
 		themeEvals = new ArrayList<>();
 //		datas = new ExcelDataRules(new Dispatcher(), "in/DataTest.xlsx");
 		dataRules = new SqLiteDataRules(new ModelAstralAD(this), sqLiteFile);
+		dataRules.addDataRulesListener(this);
 	}
 	
 	public SqLiteProfilManager getProfilManager() {
@@ -46,6 +51,7 @@ public class ModelAstral extends Observable {
 	
 	public void setProfil(Profil profil) {
 		this.profil = profil;
+		callDataMissing = true;
 		setChanged();
 		notifyObservers("profil");
 		
@@ -61,6 +67,12 @@ public class ModelAstral extends Observable {
 			boolean retour = dataRules.eval(profil.getTheme());
 			setChanged();
 			notifyObservers("evaluate");
+			
+			if ( callDataMissing ) {
+				callDataMissing = false;
+				setChanged();
+				notifyObservers("dataMissing");
+			}
 			
 			return retour;
 		}
@@ -78,7 +90,14 @@ public class ModelAstral extends Observable {
 	void addEval(String eval) {
 		themeEvals.add(eval);
 	}
-	
-	
 
+	@Override
+	public void profilSelected(Profil profil) {
+		setProfil(profil);
+	}
+	@Override
+	public void rulesReloaded() {
+		evaluateProfile();
+	}
+	
 }
